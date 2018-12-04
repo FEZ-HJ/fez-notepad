@@ -10,9 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class web {
 
-    @RequestMapping("ss")
-    public String ss(){
-        System.out.println("s");
+    @RequestMapping("index")
+    public String index(){
         return "index";
+    }
+
+    @RequestMapping("login")
+    public String login(){
+        return "login";
+    }
+
+    @RequestMapping("reg")
+    public String reg(){
+        return "reg";
     }
 }
