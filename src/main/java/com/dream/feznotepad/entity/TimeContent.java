@@ -20,7 +20,7 @@ public class TimeContent implements Serializable {
     //自动生成id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     //用户ID
     @Column(nullable = false)
@@ -52,6 +52,6 @@ public class TimeContent implements Serializable {
 
     //创建时间yyyy-MM-dd HH:mm:ss
     @Column(nullable = false)
-    private Date create = new Date();
+    private Date optTime;
 
 }
