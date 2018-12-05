@@ -1,7 +1,7 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://101.132.167.102:3306/time-management?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driver-class-name: net.sf.log4jdbc.DriverSpy
+    url: jdbc:log4jdbc:mysql://101.132.167.102:3306/time-management?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: time-management
     password: 1qazXSW@
 
@@ -9,5 +9,10 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
 server:
   port: 80
