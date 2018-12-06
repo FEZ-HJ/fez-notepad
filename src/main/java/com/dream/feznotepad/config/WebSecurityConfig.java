@@ -1,5 +1,6 @@
 package com.dream.feznotepad.config;
 
+import com.dream.feznotepad.config.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -43,6 +45,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return tokenRepository;
     }
 
+    @Bean
+    public JwtAuthenticationTokenFilter authenticationTokenFilterBean(){
+        return new JwtAuthenticationTokenFilter();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -53,7 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .rememberMe()
                     .tokenRepository(persistentTokenRepository())
                     .tokenValiditySeconds(3600)
-                    .userDetailsService(userDetailsService())
+                    .userDetailsService(myUserDetailsService)
                 .and()
                     .formLogin()
                     //跳转到验证登录验证页面
@@ -72,6 +79,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and().headers().frameOptions().sameOrigin()
         .and().csrf().disable()
         ;
+
+        http.addFilterBefore(authenticationTokenFilterBean(),UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
