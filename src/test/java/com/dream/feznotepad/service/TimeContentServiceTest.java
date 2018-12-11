@@ -41,11 +41,17 @@ public class TimeContentServiceTest {
     public void findOnDay() {
         String userId = "zhansan";
         List<TimeContent> list = service.findOnDay(DateUtils.dateToStrshort(new Date()),userId);
-        Assert.assertEquals(list.size(),1);
+        Assert.assertEquals(list.size(),2);
     }
 
     @Test
     public void deleteById() {
-        service.deleteById("1");
+        service.deleteById(5l);
+    }
+
+    @Test
+    public void findByDays(){
+        List<TimeContent> list = service.findByDays("2018-11-22","2018-11-22","zhansan");
+        Assert.assertEquals(list.size(),1);
     }
 }

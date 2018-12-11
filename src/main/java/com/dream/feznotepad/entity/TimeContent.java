@@ -52,6 +52,6 @@ public class TimeContent implements Serializable {
 
     //创建时间yyyy-MM-dd HH:mm:ss
     @Column(nullable = false)
-    private Date optTime;
+    private Date optTime = new Date();
 
 }
