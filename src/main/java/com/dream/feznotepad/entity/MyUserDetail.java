@@ -1,32 +1,34 @@
-package com.dream.feznotepad.config.jwt;
+package com.dream.feznotepad.entity;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Collection;
 
 /**
  * Created by H.J
- * 2018/12/6
+ * 2018/12/12
  */
-@Entity
 @Data
-public class JwtUserDetail implements UserDetails {
+@Entity
+public class MyUserDetail implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column
+    private String userId;
 
     @Column
     private String username;
 
     @Column(length = 500)
-    private String session_key;
+    private String password;
 
-    public JwtUserDetail(String username){
-        this.username = username;
+    public MyUserDetail(String userId){
+        this.userId = userId;
     }
 
     @Override
@@ -36,12 +38,12 @@ public class JwtUserDetail implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return this.username;
+        return this.userId;
     }
 
     @Override

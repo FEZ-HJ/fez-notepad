@@ -1,5 +1,6 @@
 package com.dream.feznotepad.config.jwt;
 
+import com.dream.feznotepad.entity.MyUserDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 //        https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
 
         logger.info("Jwt登录用户名： " + username);
-        return new JwtUserDetail(username);
+        return new MyUserDetail(username);
     }
 
 }
