@@ -15,10 +15,14 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
 server:
-  port: 8080
+  port: 80
 
 jwt:
   secret: 1
   expiration: 2
   header: sss
   tokenHead: 1
+
+wx:
+  appid: wxc9c4cac7180438f5
+  secret: fe49531867a13bb85afc08668a03fa40
