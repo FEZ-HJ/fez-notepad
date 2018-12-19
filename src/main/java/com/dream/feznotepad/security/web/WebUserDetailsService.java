@@ -1,4 +1,4 @@
-package com.dream.feznotepad.config;
+package com.dream.feznotepad.security.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
  * 2018/12/4
  */
 @Component
-public class MyUserDetailsService implements UserDetailsService {
+public class WebUserDetailsService implements UserDetailsService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

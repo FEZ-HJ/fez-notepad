@@ -1,6 +1,7 @@
-package com.dream.feznotepad.config;
+package com.dream.feznotepad.security.config;
 
-import com.dream.feznotepad.config.jwt.JwtAuthenticationTokenFilter;
+import com.dream.feznotepad.security.web.WebUserDetailsService;
+import com.dream.feznotepad.security.wx.WeChatAuthenticationSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -29,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    MyUserDetailsService myUserDetailsService;
+    WebUserDetailsService myUserDetailsService;
 
     @Autowired
     AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -37,17 +38,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    WeChatAuthenticationSecurityConfig weChatAuthenticationSecurityConfig;
+
     @Bean
     public PersistentTokenRepository persistentTokenRepository(){
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
         tokenRepository.setDataSource(dataSource);
 //        tokenRepository.setCreateTableOnStartup(true);
         return tokenRepository;
-    }
-
-    @Bean
-    public JwtAuthenticationTokenFilter authenticationTokenFilterBean(){
-        return new JwtAuthenticationTokenFilter();
     }
 
     @Override
@@ -80,7 +79,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and().csrf().disable()
         ;
 
-        http.addFilterBefore(authenticationTokenFilterBean(),UsernamePasswordAuthenticationFilter.class);
+//       添加微信登录配置
+        http.apply(weChatAuthenticationSecurityConfig);
+//        http.addFilterBefore(weChatAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
