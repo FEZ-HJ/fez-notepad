@@ -1,10 +1,12 @@
 package com.dream.feznotepad.security.wx;
 
+import com.dream.feznotepad.security.weChat.WeChatUserDetailsService;
 import com.dream.feznotepad.security.web.WebUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class WeChatAuthenticationSecurityConfig extends SecurityConfigurerAdapte
 //    private AuthenticationFailureHandler myAuthenticationFailureHandler;
 
     @Autowired
-    private WebUserDetailsService userDetailsService;
+    private WeChatUserDetailsService userDetailsService;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -37,7 +39,7 @@ public class WeChatAuthenticationSecurityConfig extends SecurityConfigurerAdapte
         smsCodeAuthenticationProvider.setUserDetailsService(userDetailsService);
 
         http.authenticationProvider(smsCodeAuthenticationProvider)
-                .addFilterAfter(smsCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(smsCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 }

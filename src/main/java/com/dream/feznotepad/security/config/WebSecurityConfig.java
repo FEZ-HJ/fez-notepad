@@ -1,5 +1,6 @@
 package com.dream.feznotepad.security.config;
 
+import com.dream.feznotepad.security.weChat.WeChatAuthenticationTokenFilter;
 import com.dream.feznotepad.security.web.WebUserDetailsService;
 import com.dream.feznotepad.security.wx.WeChatAuthenticationSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -30,10 +32,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    WebUserDetailsService myUserDetailsService;
+    WebUserDetailsService webUserDetailsService;
 
     @Autowired
     AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
+    WeChatAuthenticationTokenFilter weChatAuthenticationTokenFilter;
 
     @Autowired
     private DataSource dataSource;
@@ -45,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PersistentTokenRepository persistentTokenRepository(){
         JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
         tokenRepository.setDataSource(dataSource);
+//        是否建表，第一次建表需要设置为true
 //        tokenRepository.setCreateTableOnStartup(true);
         return tokenRepository;
     }
@@ -53,13 +59,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers( "/reg","/login","/authentication/form").permitAll()
+                .antMatchers( "/reg","/login","/authentication/form","/wxLogin").permitAll()
                 .anyRequest().authenticated()
                 .and()
                     .rememberMe()
                     .tokenRepository(persistentTokenRepository())
                     .tokenValiditySeconds(3600)
-                    .userDetailsService(myUserDetailsService)
+                    .userDetailsService(webUserDetailsService)
                 .and()
                     .formLogin()
                     //跳转到验证登录验证页面
@@ -80,10 +86,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         ;
 
 //       添加微信登录配置
-        http.apply(weChatAuthenticationSecurityConfig);
-//        http.addFilterBefore(weChatAuthenticationFilter(),UsernamePasswordAuthenticationFilter.class);
+//        http.apply(weChatAuthenticationSecurityConfig);
+        http.addFilterBefore(weChatAuthenticationTokenFilter,UsernamePasswordAuthenticationFilter.class);
     }
 
+//    设置登录表单的用户名密码的id
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -100,6 +107,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //添加自定义登录校验
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception{
-        builder.userDetailsService(myUserDetailsService);
+        builder.userDetailsService(webUserDetailsService);
     }
 }

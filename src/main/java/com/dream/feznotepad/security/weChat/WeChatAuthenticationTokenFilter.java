@@ -1,4 +1,4 @@
-package com.dream.feznotepad.config.jwt;
+package com.dream.feznotepad.security.weChat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,12 +18,13 @@ import java.io.IOException;
 /**
  * Created by H.J
  * 2018/12/6
+ * 微信小程序登录校验过滤器
  */
 @Component
-public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
+public class WeChatAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUserDetailsService userDetailsService;
+    private WeChatUserDetailsService userDetailsService;
 
     @Value("${jwt.header}")
     private String tokenHeader;
@@ -31,27 +32,26 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Value("${jwt.tokenHead}")
     private String tokenHead;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String authHeader = request.getHeader(this.tokenHeader);
-        if (authHeader != null && authHeader.startsWith(tokenHead)) {
-            final String authToken = authHeader.substring(tokenHead.length()); // The part after "Bearer "
-            String username = jwtTokenUtil.getUsernameFromToken(authToken);
-            username = "san";
+
+        if (authHeader != null) {
+
+            String username = JwtToken.getAppUID(authHeader);
+
             logger.info("checking authentication " + username);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            if (username != null ) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-//                    if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(
-                            request));
-                    logger.info("authenticated user " + username + ", setting security context");
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-//                    }
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                logger.info("authenticated user " + username + ", setting security context");
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
         chain.doFilter(request, response);

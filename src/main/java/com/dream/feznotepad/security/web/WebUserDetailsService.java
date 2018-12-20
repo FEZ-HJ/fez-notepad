@@ -1,5 +1,6 @@
 package com.dream.feznotepad.security.web;
 
+import com.dream.feznotepad.entity.WebUserDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,8 @@ public class WebUserDetailsService implements UserDetailsService {
     private UserDetails buildUser(String userId) {
         String password = passwordEncoder.encode("123456");
         logger.info("数据库密码是：" + password);
-        return new User(userId,password,true,true,true,true
-                ,AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+//        return new User(userId,password,true,true,true,true
+//                ,AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        return new WebUserDetail(userId);
     }
 }

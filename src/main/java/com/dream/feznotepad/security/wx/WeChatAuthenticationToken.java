@@ -15,9 +15,9 @@ public class WeChatAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;
 
-    public WeChatAuthenticationToken(String mobile) {
+    public WeChatAuthenticationToken(String weChatSession) {
         super(null);
-        this.principal = mobile;
+        this.principal = weChatSession;
         setAuthenticated(false);
     }
 
@@ -25,7 +25,7 @@ public class WeChatAuthenticationToken extends AbstractAuthenticationToken {
                                       Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
-        super.setAuthenticated(true); // must use super, as we override
+        super.setAuthenticated(true);
     }
 
     public Object getCredentials() {

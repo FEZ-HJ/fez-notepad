@@ -25,12 +25,12 @@ public class TimeContentController {
     /**
      * 保存记录
      * @param content   记录内容
-     * @param startTime 开始时间
-     * @param endTime   结束时间
+     * @param startTime 开始时间 yyyy-mm-dd hh:mm:ss
+     * @param endTime   结束时间 yyyy-mm-dd hh:mm:ss
      * @param type      类型
      * @param userId    用户ID
      */
-    @PostMapping("save")
+    @GetMapping("save")
     public SimpleReturn save(String content, String startTime, String endTime, String type, String userId){
         TimeContent timeContent = new TimeContent();
         timeContent.setUserId(userId);

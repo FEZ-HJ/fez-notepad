@@ -18,10 +18,10 @@ server:
   port: 80
 
 jwt:
-  secret: 1
-  expiration: 2
-  header: sss
-  tokenHead: 1
+  secret: frg%%dhj
+  expiration: 200000
+  header: wxchat
+  tokenHead: eyJhbGciOiJIUzUxMiJ9
 
 wx:
   appid: wxc9c4cac7180438f5

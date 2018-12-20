@@ -1,6 +1,6 @@
-package com.dream.feznotepad.config.jwt;
+package com.dream.feznotepad.security.weChat;
 
-import com.dream.feznotepad.entity.MyUserDetail;
+import com.dream.feznotepad.entity.WebUserDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,16 +14,14 @@ import org.springframework.stereotype.Component;
  * 小程序通过JWT验证用户
  */
 @Component
-public class JwtUserDetailsService implements UserDetailsService {
+public class WeChatUserDetailsService implements UserDetailsService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
-
-        logger.info("Jwt登录用户名： " + username);
-        return new MyUserDetail(username);
+        logger.info("微信小程序登录用户名： " + username);
+        return new WebUserDetail(username);
     }
 
 }

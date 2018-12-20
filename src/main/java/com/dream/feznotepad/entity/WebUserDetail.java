@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by H.J
@@ -15,20 +16,39 @@ import java.util.Collection;
  */
 @Data
 @Entity
-public class MyUserDetail implements UserDetails {
+public class WebUserDetail implements UserDetails {
 
     @Id
-    @Column
+    @Column(nullable = false)
     private String userId;
 
     @Column
     private String username;
 
-    @Column(length = 500)
+    //密码，小程序用户为openID
+    @Column(length = 500,nullable = false)
     private String password;
 
-    public MyUserDetail(String userId){
+    //创建时间yyyy-MM-dd HH:mm:ss
+    @Column(nullable = false)
+    private Date createTime = new Date();
+
+    //最近登录时间
+    @Column(nullable = false)
+    private Date optTime = new Date();
+
+    public WebUserDetail(){
+        super();
+    }
+
+    public WebUserDetail(String userId){
         this.userId = userId;
+    }
+
+    public WebUserDetail(String userId,String password,String username){
+        this.userId = userId;
+        this.password = password;
+        this.username = username;
     }
 
     @Override
