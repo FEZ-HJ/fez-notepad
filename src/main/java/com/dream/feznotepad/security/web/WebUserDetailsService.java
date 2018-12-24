@@ -33,8 +33,8 @@ public class WebUserDetailsService implements UserDetailsService {
     private UserDetails buildUser(String userId) {
         String password = passwordEncoder.encode("123456");
         logger.info("数据库密码是：" + password);
-//        return new User(userId,password,true,true,true,true
-//                ,AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
-        return new WebUserDetail(userId);
+        return new User(userId,password,true,true,true,true
+                ,AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+//        return new WebUserDetail(userId);
     }
 }
