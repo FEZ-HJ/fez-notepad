@@ -16,11 +16,10 @@ public interface TimeContentRepository extends JpaRepository<TimeContent,Long> {
 
     /**
      * 查询某一天的所有记录
-     * @param createTime yyyy-MM-dd
+     * @param create_time yyyy-MM-dd
      * @param userId 用户名
      */
-    @Query(value = "select id,userId,createTime,startTime,endTime,content,duration,type " +
-            "from TimeContent where createTime = ?1 and userId = ?2")
+    @Query(value = "select a from TimeContent a where a.createTime = ?1 and a.userId = ?2 order by a.startTime desc ")
     List<TimeContent> findOnDay(String create_time, String userId);
 
     /**
@@ -29,7 +28,20 @@ public interface TimeContentRepository extends JpaRepository<TimeContent,Long> {
      * @param endTime   结束时间
      * @param userId    用户ID
      */
-    @Query(value = "select id,userId,createTime,startTime,endTime,content,duration,type " +
-            "from TimeContent where startTime> ?1 and endTime < ?2 and userId = ?3")
+    @Query(value = "select a from TimeContent a where a.startTime> ?1 and a.endTime < ?2 and a.userId = ?3")
     List<TimeContent> findByDays(Date startTime, Date endTime, String userId);
+
+    /**
+     * 查询一天中，最后的结束时间
+     * @param createTime 某一天 yyyy-mm-dd
+     */
+    @Query(value = "select max(endTime) from TimeContent where createTime = ?1")
+    Date findMaxEndTime(String createTime);
+
+    /**
+     *  查询用户下的记录的天数
+     */
+    @Query(value = "select count(distinct createTime) from TimeContent  where userId = ?1")
+    int findCountByUserId(String userId);
+
 }

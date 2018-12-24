@@ -1,5 +1,6 @@
 package com.dream.feznotepad.service;
 
+import com.dream.feznotepad.dto.DurationDTO;
 import com.dream.feznotepad.entity.TimeContent;
 import com.dream.feznotepad.repository.TimeContentRepository;
 import com.dream.feznotepad.utils.DateUtils;
@@ -7,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Time;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by H.J
@@ -55,15 +54,60 @@ public class TimeContentService {
      * 计算记录中各类型的时长总和
      * @param list 记录集合
      */
-    public Map<String,Long> durationOfType(List<TimeContent> list){
+    public List<DurationDTO> durationOfType(List<TimeContent> list){
         Map<String,Long> map = new HashMap<>();
         for(TimeContent timeContent : list){
             if(!map.containsKey(timeContent.getType())){
                 map.put(timeContent.getType(),timeContent.getDuration());
             }else{
-                map.put(timeContent.getType(),map.get(timeContent.getType() + timeContent.getDuration()));
+                map.put(timeContent.getType(),map.get(timeContent.getType()) + timeContent.getDuration());
             }
         }
-        return map;
+        return durationOfType(map);
+    }
+
+
+    private List<DurationDTO> durationOfType(Map<String,Long> map){
+        List<DurationDTO> dtos = new ArrayList<>();
+        for (String key : map.keySet()) {
+            DurationDTO dto = new DurationDTO();
+            String type = "";
+            switch (key){
+                case "0" :
+                    type = "娱乐";
+                    break;
+                case "1" :
+                    type = "成长";
+                    break;
+                case "2" :
+                    type = "吃饭,睡觉";
+                    break;
+                case "3" :
+                    type = "工作";
+                    break;
+                case "4" :
+                    type = "浪费";
+                    break;
+            }
+            dto.setName(type);
+            dto.setData(map.get(key));
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+    /**
+     * 查询一天中，最后的结束时间
+     * @param createTime 某一天 yyyy-mm-dd
+     */
+    public Date findMaxEndTime(String createTime){
+        return repository.findMaxEndTime(createTime);
+    }
+
+    /**
+     *  查询用户下的记录的天数
+     */
+    public int findCountByUserId(String userId){
+        return repository.findCountByUserId(userId);
     }
 }

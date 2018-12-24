@@ -47,7 +47,6 @@ public class WeChatLogin {
             Gson gson = new Gson();
             WeChatSession weChatSession = gson.fromJson(sessionData,WeChatSession.class);
 
-
             WebUserDetail userDetail = webUserDetailService.findByUserId(weChatSession.getOpenid());
 
             //向数据库插入用户信息

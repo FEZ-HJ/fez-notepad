@@ -1,10 +1,14 @@
 package com.dream.feznotepad.controller;
 
+import com.dream.feznotepad.dto.DurationDTO;
 import com.dream.feznotepad.entity.TimeContent;
+import com.dream.feznotepad.entity.WebUserDetail;
 import com.dream.feznotepad.service.TimeContentService;
 import com.dream.feznotepad.utils.DateUtils;
 import com.dream.feznotepad.utils.SimpleReturn;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -28,12 +32,13 @@ public class TimeContentController {
      * @param startTime 开始时间 yyyy-mm-dd hh:mm:ss
      * @param endTime   结束时间 yyyy-mm-dd hh:mm:ss
      * @param type      类型
-     * @param userId    用户ID
      */
     @GetMapping("save")
-    public SimpleReturn save(String content, String startTime, String endTime, String type, String userId){
+    public SimpleReturn save(String content, String startTime, String endTime, String type){
+        WebUserDetail userDetails = (WebUserDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+
         TimeContent timeContent = new TimeContent();
-        timeContent.setUserId(userId);
+        timeContent.setUserId(userDetails.getUserId());
         timeContent.setCreateTime(DateUtils.dateToStrshort(new Date()));
         timeContent.setContent(content);
         timeContent.setStartTime(DateUtils.strToDateLong(startTime));
@@ -47,11 +52,11 @@ public class TimeContentController {
     /**
      * 查询某一天的所有记录
      * @param createTime yyyy-MM-dd
-     * @param userId     用户名
      */
     @GetMapping("findOnDay")
-    public SimpleReturn findOnDay(String createTime,String userId){
-        List<TimeContent> list = service.findOnDay(createTime,userId);
+    public SimpleReturn findOnDay(String createTime){
+        WebUserDetail userDetails = (WebUserDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        List<TimeContent> list = service.findOnDay(createTime,userDetails.getUserId());
         return new SimpleReturn(list,"200","查询成功!");
     }
 
@@ -69,13 +74,33 @@ public class TimeContentController {
      * 根据时间查询中间的记录的各类型的时长总和
      * @param startTime 开始时间 yyyy-mm-dd
      * @param endTime   结束时间 yyyy-mm-dd
-     * @param userId    用户ID
      */
     @GetMapping("findByDays")
-    public SimpleReturn findByDays(String startTime,String endTime,String userId){
-        List<TimeContent> list = service.findByDays(startTime,endTime,userId);
-        Map<String,Long> map = service.durationOfType(list);
+    public SimpleReturn findByDays(String startTime,String endTime){
+        WebUserDetail userDetails = (WebUserDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        List<TimeContent> list = service.findByDays(startTime,endTime,userDetails.getUserId());
+        List<DurationDTO> map = service.durationOfType(list);
         return new SimpleReturn(map,"200","查询成功!");
+    }
+
+    /**
+     * 查询一天中，最后的结束时间
+     * @param createTime 某一天 yyyy-mm-dd
+     */
+    @GetMapping("findMaxEndTime")
+    public SimpleReturn findMaxEndTime(String createTime){
+        Date entTime = service.findMaxEndTime(createTime);
+        return new SimpleReturn(DateUtils.dateToStrTime(entTime),"200","");
+    }
+
+    /**
+     *  查询用户下的记录的天数
+     */
+    @GetMapping("findCountByUserId")
+    public SimpleReturn findCountByUserId(){
+        WebUserDetail userDetails = (WebUserDetail) SecurityContextHolder.getContext().getAuthentication() .getPrincipal();
+        int count = service.findCountByUserId(userDetails.getUserId());
+        return new SimpleReturn(count,"200","");
     }
 
 }

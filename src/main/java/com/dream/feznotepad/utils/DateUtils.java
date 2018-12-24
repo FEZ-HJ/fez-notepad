@@ -29,6 +29,17 @@ public class DateUtils {
     }
 
     /**
+     * 获取HH:mm类型的时间
+     * @param time
+     * @return
+     */
+    public static String dateToStrTime(Date time){
+        SimpleDateFormat formatter;
+        formatter = new SimpleDateFormat ("HH:mm");
+        return formatter.format(time);
+    }
+
+    /**
      * 返回当前日期的yyyy-MM-dd的格式
      * @return yyyy-MM-dd
      */
